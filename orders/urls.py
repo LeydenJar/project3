@@ -1,6 +1,7 @@
 from django.urls import path, include
-from orders.views import newpage, index
+from orders.views import newpage, index, data
 from users.views import register
+from django.contrib.auth import views as auth_views
 
 
 
@@ -8,7 +9,10 @@ from users.views import register
 urlpatterns = [
     path("", index, name="index"),
     path("newpage", newpage, name="newpage"),
-    path('register', register)
+    path('register', register),
+    path('login', auth_views.LoginView.as_view(template_name='users/login.html'), name="login"),
+    path('logout', auth_views.LogoutView.as_view(template_name='users/logout.html'), name="logout"),
+    path('data/<type>', data, name="data")
 ]
 
 #url > view > process > response

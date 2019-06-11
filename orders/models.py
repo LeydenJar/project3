@@ -29,7 +29,7 @@ class dinnerPlatters(models.Model):
 	price = models.DecimalField(max_digits = 6, decimal_places = 2)
 
 	def __str__(self):
-		return self.name
+		return self.name + "  ---  " + self.size.name
 
 class sub(models.Model):
 	name = models.CharField(max_length=64)
@@ -60,7 +60,7 @@ class pizza(models.Model):
 	price = models.DecimalField(max_digits=6, decimal_places=2)
 
 	def __str__(self):
-		return str(self.size + self.toppings_amount + self.price)
+		return str(self.size.name + " - " + str(self.toppings_amount) + " - " + str(self.price))
 
 class order_pizza(models.Model):
 	sicilian = models.BooleanField()

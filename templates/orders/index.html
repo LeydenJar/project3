@@ -1,10 +1,19 @@
-<!DOCTYPE html>
-<html>
-	<head>
-		<title>Hey, I'm index</title>
-		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-	</head>
-	<body>
-		<h2>Hey, I'm index!</h2>
-	</body>
-</html>
+{% extends "template.html" %}
+
+
+{% load static %}
+{% block head %}
+	<title>Hey, I'm index</title>
+	<link rel="stylesheet" href="{% static 'css/index.css' %}"></link>
+	<script type="text/javascript" src="{% static 'js/index.js' %}"></script>
+{% endblock %}
+
+{% block body %}
+	<div id="buttons" class="container">
+		<button class="button btn btn-primary">Pizza</button>
+		<button class="button btn btn-primary">Subs</button>
+		<button class="button btn btn-primary">Salads</button>
+		<button class="button btn btn-primary">Dinner Platters</button>
+	</div>
+	<h2>Hey, I'm index!</h2>
+{% endblock %}

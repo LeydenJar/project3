@@ -1,14 +1,14 @@
-<!DOCTYPE html>
-<html>
-<head>
+{% extends "template.html" %}
+
+{% block head %}
 	<title>Register</title>
-</head>
-<body>
+{% endblock %}
+
+
+{%block body%}
 	<form method = "POST">
 		{% csrf_token %} 
 		{{form.as_p}}
 		<button type="submit"> Enviar </button>
 	 </form>
-	
-</body>
-</html>
+{%endblock%}
