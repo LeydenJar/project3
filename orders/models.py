@@ -80,10 +80,28 @@ class order_sub(models.Model):
 	def __str__(self):
 		return self.name
 
+
 class order(models.Model):
+	user = models.CharField(max_length=64)
 	pizzas = models.ManyToManyField(order_pizza)
 	subs = models.ManyToManyField(order_sub)
 	salads = models.ManyToManyField(salads)
 	dinnerPlatters = models.ManyToManyField(dinnerPlatters)
+	pastas = models.ManyToManyField(pastas, through="order_pasta")
 	total = models.DecimalField(max_digits=7, decimal_places=2)
 
+	@classmethod
+	def create(cls, user):
+		order = cls(user=str(user))
+		order.total = 0
+		return order
+
+class order_pasta(models.Model):
+	order = models.ForeignKey(order, on_delete=models.CASCADE)
+	pasta = models.ForeignKey(pastas, on_delete=models.CASCADE)
+	
+
+	@classmethod
+	def create(cls, order_id, pasta_id):
+		relation = cls(order= order_id, pasta=pasta_id)
+		return relation
