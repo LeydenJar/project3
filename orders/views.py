@@ -17,6 +17,49 @@ def newpage(request):
 	var = models.salads.objects.all()
 	return render(request, "orders/newpage.html", { "variable" : var })
 
+def getData(request):
+	dicionario = {
+		"pastas" : [],
+		"salads" : [],
+		"dinner_platters" : [],
+		"subs" : [],
+		"pizzas" : [],
+		"toppings" : [],
+		"extras" : []
+	}
+
+	for pasta in models.pastas.objects.all():
+		p = {"id" : pasta.id, "name" : pasta.name, "price" : pasta.price}
+		dicionario["pastas"].append(p)
+	for salad in models.salads.objects.all():
+		p = {"id" : salad.id, "name" : salad.name, "price" : salad.price}
+		dicionario["salads"].append(p)
+	for dp in models.dinnerPlatters.objects.all():
+		p= {"id" : dp.id, "name" : dp.name, "size" : dp.size.name, "price" : dp.price}
+		dicionario["dinner_platters"].append(p)
+	for sub in models.sub.objects.all():
+			p={"id" : sub.id, "name": sub.name, "size":sub.size.name, "price": sub.price}	
+			dicionario["subs"].append(p)	
+	for pizza in models.pizza.objects.all():
+		p={}
+		p["id"] = pizza.id
+		p["sicilian"] = pizza.sicilian
+		p["size"] = pizza.size.name
+		p["toppings_amount"] = pizza.toppings_amount
+		p["price"] = pizza.price
+		dicionario["pizzas"].append(p)
+
+	for extra in models.extra.objects.all():
+		p={"id" : extra.id, "name" : extra.name, "price" : extra.price}
+		dicionario["extras"].append(p)
+
+	for topping in models.topping.objects.all():
+		p={"id" : topping.id, "name" : topping.name}
+		dicionario["toppings"].append(p)
+
+	return JsonResponse(dicionario)
+
+
 def data(request, type):
 	dicionario = {
 		"tipo" : type,
