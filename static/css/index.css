@@ -1,0 +1,134 @@
+.content2{
+	position:relative;
+	height: 67%;
+	background-color: #7b523a;
+	border-width:1px;
+	border-style:solid;
+	border-color: #4e3422;
+}
+
+#buttons{
+	margin-top:2%;
+	padding:0%;
+	text-align:-webkit-center;
+	text-align:-moz-center;
+}
+
+.button{
+	position:relative;
+	width:14%;
+	margin-right:2%;
+	margin-left:2%;
+}
+#manchete{
+	position:relative;
+	width:fit-content;
+	left:50%;
+	transform:translateX(-50%);
+	margin-top:2%;
+}
+
+
+.ps_div{
+	position:relative;
+	height: 80%;
+	padding:2%;
+	width:20%;
+	border-radius:13px;
+	background-color:antiquewhite;
+	top:5%;
+	margin-left:2%;
+	text-align:-webkit-center;
+	text-align:-moz-center;
+	align-items: center;
+	overflow-y:scroll;
+	overflow-x:hidden;
+
+}
+.ps_button{
+	position:relative;
+	background-color: #539cea;
+	margin: 2%;
+	font-size:10pt;
+	width:90%;
+
+}
+
+
+.ps_name{
+	font-size:12pt;
+	text-align:left;
+
+}
+.ps_price{
+	font-size:9pt;
+	font-weight:bold;
+	text-align:right;
+}
+
+.size_div{
+	position:relative;
+	height: 80%;
+	padding:2%;
+	width:20%;
+	border-radius:13px;
+	background-color:antiquewhite;
+	text-align:-webkit-center;
+	text-align:-moz-center;
+	align-items: center;
+	overflow-y:scroll;
+	overflow-x:hidden;
+	left:25%;
+	bottom:75%;
+}
+
+.size_button{
+	height:20%;
+	margin-top:40%;
+	width:-webkit-fill-available;
+	background-color:#5b90d3;
+}
+
+.sicilian_button{
+	position:relative;
+	margin-top: 30%;
+	font-size:10pt;
+	width:90%;
+}
+
+.top_select_button{
+	position:relative;
+	width:90%;
+	margin:2%;
+}
+.top_select_div{
+	background-color:aliceblue;
+	position:relative;
+	padding:2%;
+	bottom: 155%;
+	left:48%;
+	height: 80%;
+	width:20%;
+	border-radius:13px;
+	text-align:-webkit-center;
+	text-align:-moz-center;
+	align-items: center;
+	overflow-y:scroll;
+	overflow-x:hidden;
+}
+
+.cart_div{
+	position:absolute;
+	background-color:#fff700;
+	height:-webkit-fill-available;
+	width:30%;
+	top:30%;
+	left:85%;
+	border-radius:10px;
+	border-style: solid;
+	border-width:1px;
+	border-color:#676561;
+	z-index:1;
+	text-align:center;
+	overflow-y:scroll;
+}
