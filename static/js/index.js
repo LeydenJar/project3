@@ -12,14 +12,17 @@ getInfo.onload = function(){
 	}else{
 		alert("unnable to load data");
 	}
-		
 }
+
+var currentItem = {};
 
 
 	document.querySelectorAll(".button").forEach(
 		function(button){
 			button.onclick = ()=>{
 				var button_pressed = button.innerHTML;
+				currentItem.type = button_pressed;
+				console.log(data);
 
 				if (button_pressed == "Pizza"){
 					//removendo antigo conteudo(fazer função)
@@ -42,37 +45,77 @@ getInfo.onload = function(){
 							d.innerHTML += c;
 							newb.appendChild(d);
 
+							const sicilian_buttons = document.querySelectorAll('.sicilian_button'); 
+							sicilian_buttons.forEach(function(sicilianButton){
+								sicilianButton.onclick = ()=>{
+									
 
-							//Criando botões tamanho
 
-							const j = document.querySelector(".size_div");
-							if (j == null){
-								const size_div = document.createElement("div");
-								size_div.setAttribute("class", "size_div");
-								const s = document.createElement("button");
-								s.setAttribute("class", "size_button btn btn-primary");
-								s.innerHTML = "small";
-								const b =document.createElement("button");
-								b.setAttribute("class", "size_button btn btn-primary");
-								b.innerHTML = "Big";
-								size_div.appendChild(s);
-								size_div.appendChild(b);
-								document.querySelector(".content2").appendChild(size_div);
-							}
+									//Criando botões tamanho
+									const j = document.querySelector(".size_div");
+									if (j == null){
+									const size_div = document.createElement("div");
+									size_div.setAttribute("class", "size_div");
+									const s = document.createElement("button");
+									s.setAttribute("class", "size_button btn btn-primary");
+									s.innerHTML = "small";
+									const b =document.createElement("button");
+									b.setAttribute("class", "size_button btn btn-primary");
+									b.innerHTML = "Large";
+									size_div.appendChild(s);
+									size_div.appendChild(b);
+									document.querySelector(".content2").appendChild(size_div);
+									}
 
-							//Criando botões de seleção de numero de toppings:
-							const z = Handlebars.compile("<button class='top_select_button btn btn-primary'><p class='ps_name'>{{value}}</p></button><br>");
-							y=z({ "value" : "1 topping" });
-							x=z({"value" : "2 toppings"});
-							w=z({"value" : "3 toppings"});
-							v=z({"value" : "Special"});
-							const u = document.createElement("div");
-							u.setAttribute("class", "top_select_div");
-							u.innerHTML += y;
-							u.innerHTML += x;
-							u.innerHTML += w;
-							u.innerHTML += v;
-							newb.appendChild(u);
+
+									//size buttons functionality
+									const size_buttons = document.querySelectorAll('.size_button'); 
+									size_buttons.forEach(function(sizeButton){
+									sizeButton.onclick = ()=>{
+										
+
+										//Criando botões de seleção de numero de toppings:
+										const check = document.querySelector('.top_select_div');
+										if (check == null){
+											const z = Handlebars.compile("<button class='top_select_button btn btn-primary'><p class='ps_name'>{{value}}</p></button><br>");
+											y=z({ "value" : "1 topping" });
+											x=z({"value" : "2 toppings"});
+											w=z({"value" : "3 toppings"});
+											v=z({"value" : "Special"});
+											const u = document.createElement("div");
+											u.setAttribute("class", "top_select_div");
+											u.innerHTML += y;
+											u.innerHTML += x;
+											u.innerHTML += w;
+											u.innerHTML += v;
+											newb.appendChild(u);
+
+											const ts_buttons = document.querySelectorAll('.top_select_button'); 
+											ts_buttons.forEach(function(tsButton){
+												tsButton.onclick = ()=>{
+
+													//Creating Action button
+													const check = document.querySelector('.actionButton');
+
+													if(check !== null){
+														check.parentElement.removeChild(check);
+													}
+													const actButton = document.createElement('button');
+													actButton.setAttribute('class', 'btn btn-success actionButton');
+													actButton.innerHTML = 'Choose toppings';
+													document.querySelector('.content2').appendChild(actButton);
+												}
+											});
+
+										}
+										
+									}
+							});
+								}
+
+								
+
+							});				
 				}
 				else if(button_pressed == "Subs"){
 					//removendo antigo conteudo(fazer função)
@@ -109,13 +152,6 @@ getInfo.onload = function(){
 							document.querySelectorAll(".ps_button").forEach(function(button){
 								button.onclick = ()=>{
 
-									//Fazendo botões mudarem de cor ao serem pressionados
-									botoes = document.querySelectorAll(".ps_button");
-									for(i=0; i < botoes.length; i++){
-										botoes[i].style.background = '#539cea';
-									}
-									button.style.background = '#124479';
-
 									//Criando botoes de tamanho
 									const j = document.querySelector(".size_div");
 									if (j == null){
@@ -126,7 +162,7 @@ getInfo.onload = function(){
 									s.innerHTML = "small";
 									const b =document.createElement("button");
 									b.setAttribute("class", "size_button btn btn-primary");
-									b.innerHTML = "Big";
+									b.innerHTML = "Large";
 									size_div.appendChild(s);
 									size_div.appendChild(b);
 									document.querySelector(".content2").appendChild(size_div);
@@ -136,10 +172,19 @@ getInfo.onload = function(){
 									const nbuttons = document.querySelectorAll(".size_button");
 									nbuttons.forEach(function(buttonSize){
 										buttonSize.onclick = ()=>{
-											for(i=0; i<nbuttons.length; i++){
-												nbuttons[i].style.background = '#539cea';
+
+										
+
+											//Creating Action button
+											const check = document.querySelector('.actionButton');
+
+											if(check !== null){
+												check.parentElement.removeChild(check);
 											}
-											buttonSize.style.background = '#124479';
+											const actButton = document.createElement('button');
+											actButton.setAttribute('class', 'btn btn-success actionButton');
+											actButton.innerHTML = 'Choose Extras';
+											document.querySelector('.content2').appendChild(actButton);
 										}
 									});
 								}
@@ -179,12 +224,18 @@ getInfo.onload = function(){
 								var b = button.childNodes[0].innerHTML;
 								button.onclick = ()=>{
 
-									//Fazendo botões mudarem de cor ao serem precionados
-									botoes = document.querySelectorAll(".ps_button");
-									for(i=0; i < botoes.length; i++){
-										botoes[i].style.background = '#539cea';
+									
+
+									//Creating Action button
+									const check = document.querySelector('.actionButton');
+
+									if(check !== null){
+										check.parentElement.removeChild(check);
 									}
-									button.style.background = '#124479';
+									const actButton = document.createElement('button');
+									actButton.setAttribute('class', 'btn btn-success actionButton');
+									actButton.innerHTML = 'Add To Cart';
+									document.querySelector('.content2').appendChild(actButton);
 								}
 							});
 				}
@@ -223,43 +274,111 @@ getInfo.onload = function(){
 							document.querySelectorAll(".ps_button").forEach(function(button){
 								button.onclick = ()=>{
 
-									//Fazendo botões mudarem de cor ao serem pressionados
-									botoes = document.querySelectorAll(".ps_button");
-									for(i=0; i < botoes.length; i++){
-										botoes[i].style.background = '#539cea';
+									
+
+									//Atualizando objeto currentItem
+									currentItem.name = button.childNodes[0].innerHTML;
+
+									for(i=0; i<data.dinner_platters.length; i++){
+										if (data.dinner_platters[i].name == currentItem.name && data.dinner_platters[i].size == currentItem.size){
+											console.log("Found");
+											currentItem.id = data.dinner_platters[i].id;
+											currentItem.price = data.dinner_platters[i].price;
+											break;
+										}
 									}
-									button.style.background = '#124479';
+
+									//Criando div do preço se o tamanho ja foi definido
+									if (currentItem.size){
+										preçoDiv = document.querySelector('.preçoDiv');
+										if (preçoDiv == null){
+											const div = document.createElement('div');
+											div.innerHTML = "Item price: " + currentItem.price;
+											div.setAttribute('class', 'preçoDiv');
+											document.querySelector('.content2').appendChild(div);
+										}
+										else{
+											preçoDiv.innerHTML = "Item price: " + currentItem.price;
+										}
+									}
+									
 
 									//Criando botões de tamanho
 									const j = document.querySelector(".size_div");
 									if (j == null){
-									const size_div = document.createElement("div");
-									size_div.setAttribute("class", "size_div");
-									const s = document.createElement("button");
-									s.setAttribute("class", "size_button btn btn-primary");
-									s.innerHTML = "small";
-									const b =document.createElement("button");
-									b.setAttribute("class", "size_button btn btn-primary");
-									b.innerHTML = "Big";
-									size_div.appendChild(s);
-									size_div.appendChild(b);
-									document.querySelector(".content2").appendChild(size_div);
+										const size_div = document.createElement("div");
+										size_div.setAttribute("class", "size_div");
+										const s = document.createElement("button");
+										s.setAttribute("class", "size_button btn btn-primary");
+										s.innerHTML = "Small";
+										const b =document.createElement("button");
+										b.setAttribute("class", "size_button btn btn-primary");
+										b.innerHTML = "Large";
+										size_div.appendChild(s);
+										size_div.appendChild(b);
+										document.querySelector(".content2").appendChild(size_div);
 									}
 
 									//Fazendo botoes mudarem de cor
 									const nbuttons = document.querySelectorAll(".size_button");
 									nbuttons.forEach(function(buttonSize){
 										buttonSize.onclick = ()=>{
-											for(i=0; i<nbuttons.length; i++){
-												nbuttons[i].style.background = '#539cea';
+
+											
+
+											//Atualizando objeto currentItem
+											currentItem.size = buttonSize.innerHTML;
+
+											//Atualizando preço e id do item
+											for(i=0; i<data.dinner_platters.length; i++){
+												if (data.dinner_platters[i].name == currentItem.name && data.dinner_platters[i].size == currentItem.size){
+													console.log("Found");
+													currentItem.id = data.dinner_platters[i].id;
+													currentItem.price = data.dinner_platters[i].price;
+													break;
+												}
 											}
-											buttonSize.style.background = '#124479';
+
+											//Criando div do preço
+											preçoDiv = document.querySelector('.preçoDiv');
+											if (preçoDiv == null){
+												const div = document.createElement('div');
+												div.innerHTML = "Item price: " + currentItem.price;
+												div.setAttribute('class', 'preçoDiv');
+												document.querySelector('.content2').appendChild(div);
+											}
+											else{
+												preçoDiv.innerHTML = "Item price: " + currentItem.price;
+											}
+
+											//Creating Action button
+											const check = document.querySelector('.actionButton');
+
+											if(check !== null){
+												check.parentElement.removeChild(check);
+											}
+											const actButton = document.createElement('button');
+											actButton.setAttribute('class', 'btn btn-success actionButton');
+											actButton.innerHTML = 'Add To Cart';
+											document.querySelector('.content2').appendChild(actButton);
+
+											const action = document.querySelector('.actionButton');
+											action.onclick = (button, buttonSize)=>{
+												
+
+												//enviar um request com currentItem.id e button_pressed.
+												var validateRequest = new XMLHttpRequest;
+												validateRequest.open('GET',  "Validate/" + currentItem.type + "/" + currentItem.id);
+												validateRequest.send();
+
+											}
 										}
 									});
 								}
 							});
 				}
-				else if(button_pressed == "Pastas"){
+				else if(button_pressed == "Pastas"){ 
+
 					//removendo antigo conteudo(fazer função)
 							var cont = document.querySelector(".content2");
 							cont.parentElement.removeChild(cont);
@@ -291,24 +410,36 @@ getInfo.onload = function(){
 							document.querySelectorAll(".ps_button").forEach(function(button){
 								var b = button.childNodes[0].innerHTML;
 								button.onclick = ()=>{
-									const request = new XMLHttpRequest();
+
+									
+
+
+
+
+									//Creating Action button
+									const check = document.querySelector('.actionButton');
+
+									if(check !== null){
+										check.parentElement.removeChild(check);
+									}
+									const actButton = document.createElement('button');
+									actButton.setAttribute('class', 'btn btn-success actionButton');
+									actButton.innerHTML = 'Add To Cart';
+									document.querySelector('.content2').appendChild(actButton);
+
+									/*const request = new XMLHttpRequest();
 									tipo = button_pressed;
 									request.open("GET", "validate/" + tipo + "/" + b);
 									request.send();
 
-									//Fazendo botões mudarem de cor ao serem pressionados
-									botoes = document.querySelectorAll(".ps_button");
-									for(i=0; i < botoes.length; i++){
-										botoes[i].style.background = '#539cea';
-									}
-									button.style.background = '#124479';
+									
 
 
 									//Tratando dados do carrinho
 									request.onload = function(){
 										var response = JSON.parse(request.responseText);
 										console.log(response);
-									}
+									}*/
 									
 
 
