@@ -144,19 +144,20 @@
 }
 
 .preçoDiv{
-	position:relative;
+	position:absolute;
 	border-radius: 10px;
 	background-color:#ad6c44;
 	padding-left: 5%;
 	padding-right: 5%;
 	width: fit-content;
 	left:50%;
-	bottom: 63%;
+	top: 97%;
 	transform: translateX(-50%);
 	border-style: solid;
 	border-width:1px;
 	border-color:#905939;
 }
+
 .btn{
 	background-color:#532f18;
 	border-color:#a0512a !important;

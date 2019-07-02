@@ -1,5 +1,5 @@
 from django.urls import path, include
-from orders.views import newpage, index, data, validate, getData
+from orders.views import index, data, validate, getData, orders, getOrders
 from users.views import register
 from django.contrib.auth import views as auth_views
 
@@ -8,13 +8,14 @@ from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path("", index, name="index"),
-    path("newpage", newpage, name="newpage"),
     path('register', register),
     path('login', auth_views.LoginView.as_view(template_name='users/login.html'), name="login"),
     path('logout', auth_views.LogoutView.as_view(template_name='users/logout.html'), name="logout"),
     path('getData', getData, name='getData'),
     path('data/<type>', data, name="data"),
-    path('validate/<type>/<name>', validate, name="validate")
+    path('validate/<type>/<name>', validate, name="validate"),
+    path('orders', orders, name="orders"),
+    path('getOrders', getOrders, name="getOrders")
 ]
 
 #url > view > process > response

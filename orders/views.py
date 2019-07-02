@@ -13,9 +13,17 @@ def index(request):
 	else:
 		return redirect("login")
 
-def newpage(request):
+def orders(request):
 	var = models.salads.objects.all()
-	return render(request, "orders/newpage.html", { "variable" : var })
+	return render(request, "orders/orders.html", { "variable" : var })
+
+def getOrders(request):
+	dicionario = {}
+	for order in models.orders.objects.all():
+		if order.user == request.user:
+			dicionario["order"] = [order]
+			break
+	return JsonResponse(dicionario)
 
 def getData(request):
 	dicionario = {
