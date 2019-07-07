@@ -1,4 +1,5 @@
 from django.db import models
+import sys
 
 # Create your models here.
 
@@ -62,14 +63,7 @@ class pizza(models.Model):
 	def __str__(self):
 		return str(self.size.name + " - " + str(self.toppings_amount) + " - " + str(self.price))
 
-class order_pizza(models.Model):
-	sicilian = models.BooleanField()
-	size = models.ForeignKey(sizes, on_delete=models.CASCADE)
-	toppings = models.ManyToManyField(topping)
-	price = models.DecimalField(max_digits=6, decimal_places=2)
 
-	def __str__(self):
-		return str(self.size + self.sicilian + self.toppings + self.price)
 
 class order_sub(models.Model):
 	name = models.ForeignKey(sub, on_delete=models.CASCADE)
@@ -83,7 +77,7 @@ class order_sub(models.Model):
 
 class order(models.Model):
 	user = models.CharField(max_length=64)
-	pizzas = models.ManyToManyField(order_pizza)
+	pizzas = models.ManyToManyField(pizza, through="order_pizza")
 	subs = models.ManyToManyField(order_sub)
 	salads = models.ManyToManyField(salads)
 	dinnerPlatters = models.ManyToManyField(dinnerPlatters)
@@ -104,4 +98,29 @@ class order_pasta(models.Model):
 	@classmethod
 	def create(cls, order_id, pasta_id):
 		relation = cls(order= order_id, pasta=pasta_id)
+		return relation
+
+
+class order_pizza(models.Model):
+#	sicilian = models.BooleanField()
+#	size = models.ForeignKey(sizes, on_delete=models.CASCADE)
+	
+#	price = models.DecimalField(max_digits=6, decimal_places=2)
+	pizza = models.ForeignKey(pizza, on_delete=models.CASCADE)
+	orderInstance = models.ForeignKey(order, on_delete=models.CASCADE)
+	toppings = models.ManyToManyField(topping)
+	
+	def __str__(self):
+		return str(self.size + self.sicilian + self.toppings + self.price)
+
+	@classmethod
+	def create(cls, order_id, pizza_id, toppings):
+		relation = cls(pizza = pizza_id, orderInstance = order_id)
+		for u in toppings:
+			print("repeating", file=sys.stderr)
+			for i in topping.objects.all():
+				if i.name == u:
+					relation.toppings.append(i)
+					print("breaking", sys.stderr)
+					break
 		return relation
