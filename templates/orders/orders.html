@@ -1,0 +1,18 @@
+{% extends "template.html" %}
+{% load static %}
+
+{% block head %}
+	<title>Register</title>
+	<script type='text/javascript' src='{%static "js/orders.js"%}'></script>
+{% endblock %}
+			
+
+{% block body %}
+	<h2>Hey!! This will not be the register page</h2>
+		<ul>
+			{% for salada in variable %}
+				<li>  {{ salada.name }}  </li>
+			{% endfor %}
+		<ul>
+{% endblock %}
+
