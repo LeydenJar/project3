@@ -89,84 +89,116 @@ def validate(request):
 		order.save()
 
 
-
 	if tipo == "pizza":
 		issicilian = request.POST.get('isSicilian')
 		size = request.POST.get('size')
 		toppingsAmount = request.POST.get('toppingsAmount')
-		toppings = request.POST.get("toppings")
-		print(str(issicilian)+str(size)+str(toppingsAmount))
-		print(toppings)
-		print(type(issicilian))
-		print(type(size))	
-		print(type(toppingsAmount))
-		
-
+		toppings = list(request.POST.get("toppings").split(","))
 
 		iden = False
 		for pizza in models.pizza.objects.all():
-			print (str(pizza.sicilian)+str(pizza.size)+str(pizza.toppings_amount))
-			print(type(pizza.sicilian))
-			print(type(pizza.size.name))	
-			print(type(pizza.toppings_amount))
-
 			if str(pizza.sicilian).upper() == issicilian.upper() and pizza.size.name == size and str(pizza.toppings_amount) == toppingsAmount:
 				iden = pizza
-				print("******************HOPE")
 				break
 
-		if iden == False:
-			print("Raise error")
-			#levantar erro
 
-		newrelation = models.order_pizza.create(order, pizza, toppings)
+		if iden == False or len(toppings) > int(toppingsAmount):
+			return JsonResponse(dicionario)
+			
+
+		newrelation = models.order_pizza.create(order, iden, toppings)
 		newrelation.save()
+
+		for o in models.order.objects.all():
+			if o.id == order.id:
+				o.pizzas.add(newrelation)
+
+		for u in toppings:
+			for i in models.topping.objects.all():
+				if i.name == u:
+					newrelation.toppings.add(i)
+					print("breaking", sys.stderr)
+					break
+		newrelation.save()
+
+		order.total += newrelation.price
+		order.save()
 
 		serial = serializers.orderserializer(order).data
 		dicionario["order"] = serial
-		return JsonResponse(dicionario)
-
-			
+		dicionario["success"] = True
+		
 
 	elif tipo == "sub":
-		print(request.POST.get('size'))
+		
+		name = request.POST.get('name')
+		size = request.POST.get('size')
+		extras = list(request.POST.get('extras').split(","))
+		print(extras)
+
 		for sub in models.sub.objects.all():
-			if sub.name == name:
-				print("hey")
+			if str(sub.name) == name and str(sub.size) == size:
+				relation = models.order_sub.create(sub)
+				relation.save()
+				for i in models.extra.objects.all():
+					if i.name in extras:
+						relation.extras.add(i)
+						relation.price += i.price
+				dicionario["success"] = True
+				print("found")
+				
+				relation.save()
+				for o in models.order.objects.all():
+					if o.id == order.id:
+						order.subs.add(relation)
+						order.total += relation.price
+						order.save
+						o = order
+						o.save()
+						break
+				break
+		serial = serializers.orderserializer(order).data
+		dicionario["order"] = serial
 	
-	elif tipo == "Salads":
+	elif tipo == "salad":
 		for salad in models.salads.objects.all():
 			if salad.name == name:
 				dicionario["success"] = True
-				dicionario["product_name"] = name
-				dicionario["product_price"] = salad.price
+				order.total += salad.price
+				newrelation = models.order_salad.create(order, salad)
+				newrelation.save()
+				order.save()
+				serial = serializers.orderserializer(order).data
+				dicionario["order"] = serial
+				break
 
-	elif tipo =="Dinner Platters":
+	elif tipo =="dinner platter":
+		size = request.POST.get("size")
 		for dp in models.dinnerPlatters.objects.all():
-			if pizza.name == name:
-				print("hey")
+			if dp.name == name and str(dp.size) == size:
+				dicionario["success"] = True
+				order.total += dp.price
+				newrelation = models.order_dinnerPlatter.create(order, dp)
+				newrelation.save()
+				order.save()
+				serial = serializers.orderserializer(order).data
+				dicionario["order"] = serial
+				break
 	
-	else:
+	elif tipo == "Pasta":
 		for pasta in models.pastas.objects.all():
 			if pasta.name == name:
 				dicionario["success"] = True
-				for order in models.order.objects.all():
-					if order.user == str(request.user):
-						print("order already exist", file=sys.stderr)
-						order.total += pasta.price
-						newrelation = models.order_pasta.create(order, pasta)
-						newrelation.save()
-						order.save()
-						serial = serializers.orderserializer(order).data
-						dicionario["order"] = serial
-						return JsonResponse(dicionario)
-				print("order did not exist yet", file = sys.stderr)
-				newOrder = models.order.create(request.user)
-				newOrder.save()
-				newOrder.total += pasta.price
-				newOrder.save()
-				newrelation = models.order_pasta.create(newOrder, pasta)
+				order.total += pasta.price
+				newrelation = models.order_pasta.create(order, pasta)
 				newrelation.save()
-				serial = serializers.orderserializer(newOrder).data
+				order.save()
+				serial = serializers.orderserializer(order).data
 				dicionario["order"] = serial
+				break
+
+	serial = serializers.orderserializer(order).data
+	serial2 = serializers.orderserializer(models.order.objects.get(pk = order.id)).data
+	print(serial)
+	print(serial2)
 	return JsonResponse(dicionario)
