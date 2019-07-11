@@ -13,7 +13,6 @@ function removeOldContent(newManchete){
 
 const newPsButton = Handlebars.compile("<button class='ps_button btn btn-primary'><p class='ps_name'>{{buttonText}}</p>");
 function createPsButtons(obj){
-
 	const n = document.createElement("div");
 	n.setAttribute('class', 'ps_div');
 
@@ -24,9 +23,13 @@ function createPsButtons(obj){
 		n.innerHTML += c;
 	}
 	else{
+		var button_name = null
 		for(i = 0 ; i < obj.length; i++){
-		const b = newPsButton({"buttonText" : obj[i].name});
-		n.innerHTML += b;
+			if (obj[i].name !== button_name){
+				const b = newPsButton({"buttonText" : obj[i].name});
+				n.innerHTML += b;
+				button_name = obj[i].name;
+			}
 		}
 	}
 	return n;
@@ -111,13 +114,18 @@ function createActionButton(text){
 function updateExtraButtons(currentItem){
 	document.querySelectorAll(".optionButton").forEach(function(optionButton){
 		optionButton.onclick = ()=>{
-			currentItem.toppings.push(optionButton.innerHTML);
-			const selectedButton = document.createElement("button");
-			selectedButton.setAttribute("class", "btn btn-primary selectedButton");
-			selectedButton.innerHTML = optionButton.innerHTML;
-			document.querySelector(".divSelected").appendChild(selectedButton);
-			optionButton.parentElement.removeChild(optionButton);
-			updateExtraButtons(currentItem);
+			if (currentItem.toppingsAmount>document.querySelectorAll(".selectedButton").length){
+				currentItem.toppings.push(optionButton.innerHTML);
+				const selectedButton = document.createElement("button");
+				selectedButton.setAttribute("class", "btn btn-primary selectedButton");
+				selectedButton.innerHTML = optionButton.innerHTML;
+				document.querySelector(".divSelected").appendChild(selectedButton);
+				optionButton.parentElement.removeChild(optionButton);
+				updateExtraButtons(currentItem);
+			}
+			else{
+				alert("Too much toppings!!");
+			}
 		}
 	});
 
@@ -204,9 +212,10 @@ var currentItem = {};
 										y=z({"inner" : "1 topping", "value" : 1});
 										x=z({"inner" : "2 toppings", "value" : 2});
 										w=z({"inner" : "3 toppings", "value" : 3});
-										v=z({"inner" : "Special", "value" : 10});
+										v=z({"inner" : "Special (10 toppings)", "value" : 10});
 										const u = document.createElement("div");
 										u.setAttribute("class", "top_select_div");
+										u.innerHTML += t;
 										u.innerHTML += y;
 										u.innerHTML += x;
 										u.innerHTML += w;
@@ -260,6 +269,7 @@ var currentItem = {};
 
 													console.log(currentItem);
 													currentItem = updateExtraButtons(currentItem);
+													console.log(currentItem)
 
 													addToCartButton.onclick = ()=>{
 														info = new FormData(document.getElementById("addToCart"));
@@ -274,7 +284,16 @@ var currentItem = {};
 														validateRequest.send(info);
 
 														validateRequest.onload = ()=>{
-															console.log(JSON.parse(validateRequest.responseText));
+															const response = JSON.parse(validateRequest.responseText);
+															console.log(response);
+															if(response.success === true){
+																alert("sucess");
+																										
+															}else{
+																alert("Error, it seems like the pizza you asked do not exist");													
+															}
+															currentItem = {};
+															window.location.replace("/");
 														}
 													}
 
@@ -296,6 +315,7 @@ var currentItem = {};
 					//reset currentItem
 					currentItem = {};
 					currentItem.tipo = "sub";
+					currentItem.toppingsAmount = 10;
 
 					//removing old content, updating manchete and creating ps buttons
 					removeOldContent("SUBS").appendChild(createPsButtons(data.subs));
@@ -364,16 +384,24 @@ var currentItem = {};
 										currentItem = updateExtraButtons(currentItem);
 										addToCartButton.onclick = ()=>{
 											info = new FormData(document.getElementById("addToCart"));
+											info.append("name", currentItem.name);
 											info.append("tipo", currentItem.tipo);
 											info.append("size", currentItem.size);
-											info.append("extras", currentItem.extras);
+											
+											info.append("extras", currentItem.toppings);
 
 											validateRequest = new XMLHttpRequest;
 											validateRequest.open("POST", "validate");
 											validateRequest.send(info);
 
 											validateRequest.onload = ()=>{
-												console.log(JSON.parse(validateRequest.responseText));
+												const response = JSON.parse(validateRequest.responseText);
+												if (response.success == true){
+													alert("success")
+												}else{alert("Something went wrong...")}
+												currentItem = {};
+												window.location.replace("/");
+												console.log(response)
 											}
 										}
 										backButton.onclick = ()=>{
@@ -409,7 +437,26 @@ var currentItem = {};
 							createPriceDiv(currentItem.price);
 
 							
-							createActionButton("Add to Cart");
+							const action = createActionButton("Add to Cart");
+							action.onclick = ()=>{
+								info = new FormData(document.getElementById("addToCart"));
+								info.append("name", currentItem.name);
+								info.append("tipo", currentItem.tipo);
+
+								validateRequest = new XMLHttpRequest;
+								validateRequest.open("POST", "validate");
+								validateRequest.send(info);
+
+								validateRequest.onload = ()=>{
+									const response = JSON.parse(validateRequest.responseText);
+									if (response.success == true){
+										alert("success")
+									}else{alert("Something went wrong...")}
+									currentItem = {};
+									window.location.replace("/");
+									console.log(response)
+								}
+							}
 						}
 					});
 				}
@@ -450,16 +497,29 @@ var currentItem = {};
 									//Creating Price Div
 									createPriceDiv(currentItem.price);
 									//Creating Action button
-									createActionButton("Add to Cart");
+									const action = createActionButton("Add to Cart");
 
 									//Action button functionality
-									const action = document.querySelector('.actionButton');
-									action.onclick = (button, buttonSize)=>{
 									
-										//enviar um request com currentItem.id e button_pressed.
-										var validateRequest = new XMLHttpRequest;
-										validateRequest.open('GET',  "Validate/" + currentItem.type + "/" + currentItem.id);
-										validateRequest.send();
+									action.onclick = (button, buttonSize)=>{
+										info = new FormData(document.getElementById("addToCart"));
+										info.append("name", currentItem.name);
+										info.append("tipo", currentItem.tipo);
+										info.append("size", currentItem.size);
+
+										validateRequest = new XMLHttpRequest;
+										validateRequest.open("POST", "validate");
+										validateRequest.send(info);
+
+										validateRequest.onload = ()=>{
+											const response = JSON.parse(validateRequest.responseText);
+											if (response.success == true){
+												alert("success")
+											}else{alert("Something went wrong...")}
+											currentItem = {};
+											window.location.replace("/");
+											console.log(response)
+										}
 
 									}
 								}
@@ -471,7 +531,7 @@ var currentItem = {};
 
 					//reset currentItem
 					currentItem = {};
-					currentItem.tipo = "pasta";
+					currentItem.tipo = "Pasta";
 
 					//removing old content, updating manchete and creating ps buttons.
 					removeOldContent("PASTAS").appendChild(createPsButtons(data.pastas));
@@ -489,7 +549,26 @@ var currentItem = {};
 							createPriceDiv(currentItem.price);
 
 							//Creating Action button
-							createActionButton("Add to Cart");					
+							const actButton = createActionButton("Add to Cart");
+							actButton.onclick = ()=>{
+								info = new FormData(document.getElementById("addToCart"));
+								info.append("name", currentItem.name);
+								info.append("tipo", currentItem.tipo);
+
+								validateRequest = new XMLHttpRequest;
+								validateRequest.open("POST", "validate");
+								validateRequest.send(info);
+
+								validateRequest.onload = ()=>{
+									const response = JSON.parse(validateRequest.responseText);
+									if (response.success == true){
+										alert("success")
+									}else{alert("Something went wrong...")}
+									currentItem = {};
+									window.location.replace("/");
+									console.log(response)
+								}
+							}				
 						}
 					});
 				} 

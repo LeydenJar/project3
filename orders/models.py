@@ -1,6 +1,7 @@
 from django.db import models
 import sys
 
+
 # Create your models here.
 
 class salads(models.Model):
@@ -74,13 +75,41 @@ class order_sub(models.Model):
 	def __str__(self):
 		return self.name
 
+	@classmethod
+	def create(cls, sub):
+		instance = cls(name = sub, size = sub.size, price = sub.price)
+		return instance
+
+	
+
+class order_pizza(models.Model):
+	sicilian = models.BooleanField()
+	size = models.ForeignKey(sizes, on_delete=models.CASCADE)
+	price = models.DecimalField(max_digits=6, decimal_places=2)
+#	orderInstance = models.ForeignKey(order, on_delete=models.CASCADE)
+	toppings = models.ManyToManyField(topping)
+	
+	def __str__(self):
+		return (str(self.size) + str(self.sicilian) + str(self.price))
+
+	@classmethod
+	def create(cls, orderInstance, pizzaInstance, toppings):
+		relation = cls()#orderInstance = orderInstance
+		for p in pizza.objects.all():
+			if p.id == pizzaInstance.id:
+				relation.sicilian=p.sicilian
+				relation.size = p.size
+				relation.price = p.price
+				break
+		
+		return relation
 
 class order(models.Model):
 	user = models.CharField(max_length=64)
-	pizzas = models.ManyToManyField(pizza, through="order_pizza")
+	pizzas = models.ManyToManyField(order_pizza)
 	subs = models.ManyToManyField(order_sub)
-	salads = models.ManyToManyField(salads)
-	dinnerPlatters = models.ManyToManyField(dinnerPlatters)
+	salads = models.ManyToManyField(salads, through="order_salad")
+	dinnerPlatters = models.ManyToManyField(dinnerPlatters, through="order_dinnerPlatter")
 	pastas = models.ManyToManyField(pastas, through="order_pasta")
 	total = models.DecimalField(max_digits=7, decimal_places=2)
 
@@ -100,27 +129,21 @@ class order_pasta(models.Model):
 		relation = cls(order= order_id, pasta=pasta_id)
 		return relation
 
-
-class order_pizza(models.Model):
-#	sicilian = models.BooleanField()
-#	size = models.ForeignKey(sizes, on_delete=models.CASCADE)
-	
-#	price = models.DecimalField(max_digits=6, decimal_places=2)
-	pizza = models.ForeignKey(pizza, on_delete=models.CASCADE)
-	orderInstance = models.ForeignKey(order, on_delete=models.CASCADE)
-	toppings = models.ManyToManyField(topping)
-	
-	def __str__(self):
-		return str(self.size + self.sicilian + self.toppings + self.price)
+class order_salad(models.Model):
+	order = models.ForeignKey(order, on_delete=models.CASCADE)
+	salad = models.ForeignKey(salads, on_delete=models.CASCADE)
 
 	@classmethod
-	def create(cls, order_id, pizza_id, toppings):
-		relation = cls(pizza = pizza_id, orderInstance = order_id)
-		for u in toppings:
-			print("repeating", file=sys.stderr)
-			for i in topping.objects.all():
-				if i.name == u:
-					relation.toppings.append(i)
-					print("breaking", sys.stderr)
-					break
+	def create(cls, order, salad):
+		relation = cls(order= order, salad=salad)
+		return relation
+
+
+class order_dinnerPlatter(models.Model):
+	order = models.ForeignKey(order, on_delete=models.CASCADE)
+	dinnerPlatter = models.ForeignKey(dinnerPlatters, on_delete=models.CASCADE)
+
+	@classmethod
+	def create(cls, order, dp):
+		relation = cls(order= order, dinnerPlatter=dp)
 		return relation
