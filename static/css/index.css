@@ -119,10 +119,10 @@
 	overflow-x:hidden;
 }
 
-.cart_div{
+.currentItem_div{
 	position:absolute;
 	background-color:#a74c18;
-	height:-webkit-fill-available;
+	height:85%;
 	width:30%;
 	top:30%;
 	left:85%;
@@ -130,9 +130,10 @@
 	border-style: solid;
 	border-width:1px;
 	border-color:#676561;
-	z-index:-1;
+	z-index:1;
 	text-align:center;
 	overflow-y:scroll;
+	overflow-x: visible;
 }
 
 .actionButton{
@@ -176,7 +177,7 @@
 .extrasDiv{
 	position:absolute;
 	height: 100%;
-	width: 100%;
+	width: 87%;
 	bottom:0%;
 	padding:2.5%;
 	background-color: #582b15;

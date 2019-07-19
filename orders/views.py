@@ -8,21 +8,38 @@ from django.forms.models import model_to_dict
 # Create your views here.
 def index(request):
 	if request.user.is_authenticated:
-		var= "hey, we find the problem"
-		return render(request, "orders/index.html", {"value": var})
+		return render(request, "orders/index.html")
 	else:
 		return redirect("login")
 
 def orders(request):
-	var = models.salads.objects.all()
-	return render(request, "orders/orders.html", { "variable" : var })
+	return render(request, "orders/orders.html")
 
 def getOrders(request):
-	dicionario = {}
-	for order in models.orders.objects.all():
-		if order.user == request.user:
-			dicionario["order"] = [order]
-			break
+	#pg de orders manda ajax
+	dicionario = {
+
+	"cart" : None,
+	"orders" : []
+	}
+	try:
+		cart = models.order.objects.get(user = request.user)
+		serial = serializers.orderserializer(cart).data
+		dicionario["cart"] = serial
+	except:
+		print("user has no cart")
+
+	try:
+		made_orders = models.made_orders.objects.get(user=request.user)
+		for made_order in made_orders:
+			n = models.order.objects.get(pk = made_order.order.id)
+			dicionario["orders"].append(n)
+	except:
+		made_orders=None
+	return JsonResponse(dicionario)
+
+def putOrder(request):
+	dicionario = {"teste" : "teste"} 
 	return JsonResponse(dicionario)
 
 def getData(request):

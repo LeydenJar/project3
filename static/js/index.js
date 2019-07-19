@@ -57,7 +57,7 @@ function updateCurrentItem(currentItem, objects){
 	currentItem.price = null;
 	if(currentItem.tipo == "pizza"){
 		for (i=0; i<objects.length; i++){
-			if (currentItem.name === objects[i].name && currentItem.size === objects[i].size && currentItem.toppingsAmount == objects[i].toppings_amount){
+			if (currentItem.isSicilian === objects[i].sicilian && currentItem.size === objects[i].size && currentItem.toppingsAmount == objects[i].toppings_amount){
 				currentItem.id = objects[i].id;
 				currentItem.price = objects[i].price;
 				break;
@@ -121,6 +121,16 @@ function updateExtraButtons(currentItem){
 				selectedButton.innerHTML = optionButton.innerHTML;
 				document.querySelector(".divSelected").appendChild(selectedButton);
 				optionButton.parentElement.removeChild(optionButton);
+				if (currentItem.tipo = "sub"){
+					for (i = 0; i < data.extras.length; i++){
+						if (data.extras[i].name === selectedButton.innerHTML){
+							console.log(typeof currentItem.price);
+							console.log(typeof data.extras[i].price);
+							currentItem.price = (parseFloat(currentItem.price) + parseFloat(data.extras[i].price)).toFixed(2);
+							break
+						}
+					}
+				}
 				updateExtraButtons(currentItem);
 			}
 			else{
@@ -134,13 +144,56 @@ function updateExtraButtons(currentItem){
 			selectedButton.setAttribute("class", "btn btn-primary optionButton");
 			document.querySelector(".extraOptionsDiv").appendChild(selectedButton);
 			currentItem.toppings.splice(currentItem.toppings.indexOf(selectedButton.innerHTML),1);
+			if (currentItem.tipo = "sub"){
+				for (i = 0; i < data.extras.length; i++){
+					if (data.extras[i].name === selectedButton.innerHTML){
+						currentItem.price = (parseFloat(currentItem.price) - parseFloat(data.extras[i].price)).toFixed(2);
+						break
+					}
+				}
+			}
 			updateExtraButtons(currentItem);
+
+
 		}
 	});
+	updateCurrentItemDiv(currentItem);
 	return currentItem;
 }
 
+function updateCurrentItemDiv(currentItem){
+	var name = document.getElementById("Name").childNodes[3];
+	var size = document.getElementById("Size").childNodes[3];
+	var extras = document.getElementById("Extras").childNodes[3];
+	var price = document.getElementById("Price").childNodes[3]; 
 
+	console.log(name);
+
+	name.innerText = "N/A";
+	size.innerText = "N/A";
+	extras.innerText = "N/A";
+	price.innerText = "N/A";
+
+	if (currentItem.tipo == "pizza"){
+		if (currentItem.isSicilian){
+			name.textContent = "Sicilian pizza";
+		}else{
+			name.textContent = "Normal pizza";
+		}
+	}else if(currentItem.name){
+		name.innerText = currentItem.name;
+	}
+
+	if (currentItem.size){
+		size.innerText = currentItem.size;
+	}
+	if (currentItem.toppings) {
+		extras.innerText = currentItem.toppings;
+	}
+	if (currentItem.price){
+		price.innerText = currentItem.price;
+	}
+}
 
 document.addEventListener("DOMContentLoaded", ()=>{
 
@@ -168,6 +221,7 @@ var currentItem = {};
 
 					currentItem = {};
 					currentItem.tipo = "pizza";
+					updateCurrentItemDiv(currentItem);
 					//removing old content, updating manchete and creating ps buttons.
 					removeOldContent("PIZZAS").appendChild(createPsButtons(data.pizzas));
 					
@@ -180,6 +234,7 @@ var currentItem = {};
 							console.log(currentItem.isSicilian);
 
 							currentItem = updateCurrentItem(currentItem, data.pizzas);
+							updateCurrentItemDiv(currentItem);
 
 							//Creating price div if toppings amount is already defined.
 							if (currentItem.toppingsAmount){
@@ -198,6 +253,7 @@ var currentItem = {};
 									currentItem.size = sizeButton.innerHTML;
 								
 									currentItem = updateCurrentItem(currentItem, data.pizzas);
+									updateCurrentItemDiv(currentItem);
 
 									//Creating price div if toppings amount is already defined.
 									if (currentItem.toppingsAmount){
@@ -228,8 +284,10 @@ var currentItem = {};
 											tsButton.onclick = ()=>{
 												//Atualizando objeto currentItem
 												currentItem.toppingsAmount = tsButton.value;
+												currentItem.toppings = [];
 
 												currentItem = updateCurrentItem(currentItem, data.pizzas);
+												updateCurrentItemDiv(currentItem);
 
 												//Creating price div.
 												createPriceDiv(currentItem.price);
@@ -316,6 +374,7 @@ var currentItem = {};
 					currentItem = {};
 					currentItem.tipo = "sub";
 					currentItem.toppingsAmount = 10;
+					updateCurrentItemDiv(currentItem);
 
 					//removing old content, updating manchete and creating ps buttons
 					removeOldContent("SUBS").appendChild(createPsButtons(data.subs));
@@ -328,6 +387,7 @@ var currentItem = {};
 							currentItem.name = button.childNodes[0].innerHTML;
 
 							currentItem = updateCurrentItem(currentItem, data.subs);
+							updateCurrentItemDiv(currentItem);
 
 							//Updating price div if size is already defined
 							if (currentItem.size){
@@ -345,6 +405,7 @@ var currentItem = {};
 									//Atualizando objeto currentItem
 									currentItem.size = buttonSize.innerHTML;
 									currentItem = updateCurrentItem(currentItem, data.subs);
+									updateCurrentItemDiv(currentItem);
 
 									//Creating Price Div
 									createPriceDiv(currentItem.price);
@@ -420,6 +481,7 @@ var currentItem = {};
 					//reset currentItem
 					currentItem = {};
 					currentItem.tipo="salad";
+					updateCurrentItemDiv(currentItem);
 
 					//removing old content, updating manchete and creating ps buttons.
 					removeOldContent("SALADS").appendChild(createPsButtons(data.salads));
@@ -432,6 +494,7 @@ var currentItem = {};
 							currentItem.name = button.childNodes[0].innerHTML;
 
 							currentItem = updateCurrentItem(currentItem, data.salads);
+							updateCurrentItemDiv(currentItem);
 
 							//Creating Price Div
 							createPriceDiv(currentItem.price);
@@ -465,6 +528,7 @@ var currentItem = {};
 					//reset currentItem
 					currentItem = {};
 					currentItem.tipo = "dinner platter";
+					updateCurrentItemDiv(currentItem);
 
 					//removing old content, updating manchete and creating ps buttons.
 					removeOldContent("DINNER PLATTERS").appendChild(createPsButtons(data.dinner_platters));
@@ -477,6 +541,7 @@ var currentItem = {};
 							currentItem.name = button.childNodes[0].innerHTML;
 
 							currentItem = updateCurrentItem(currentItem, data.dinner_platters);
+							updateCurrentItemDiv(currentItem);
 
 							//updating price div if size is already defined
 							if (currentItem.size){
@@ -493,6 +558,7 @@ var currentItem = {};
 									//Atualizando objeto currentItem
 									currentItem.size = buttonSize.innerHTML;
 									currentItem = updateCurrentItem(currentItem, data.dinner_platters);
+									updateCurrentItemDiv(currentItem);
 
 									//Creating Price Div
 									createPriceDiv(currentItem.price);
@@ -532,6 +598,7 @@ var currentItem = {};
 					//reset currentItem
 					currentItem = {};
 					currentItem.tipo = "Pasta";
+					updateCurrentItemDiv(currentItem);
 
 					//removing old content, updating manchete and creating ps buttons.
 					removeOldContent("PASTAS").appendChild(createPsButtons(data.pastas));
@@ -544,6 +611,7 @@ var currentItem = {};
 							currentItem.name = button.childNodes[0].innerHTML;
 
 							currentItem = updateCurrentItem(currentItem, data.pastas);
+							updateCurrentItemDiv(currentItem);
 
 							//Creating Price Div
 							createPriceDiv(currentItem.price);

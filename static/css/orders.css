@@ -1,0 +1,21 @@
+
+#cartDiv{
+	position:relative;
+	background-color: white;
+	width:40%;
+	height:90%;
+	margin:15px;
+	overflow-y:scroll;
+	
+
+}
+#OrdersDiv{
+	position:relative;
+	background-color: white;
+	width:40%;
+	height:90%;
+	left:50%;
+	bottom:93%;
+	margin:15px;
+	overflow-y:scroll;
+}

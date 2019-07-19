@@ -2,17 +2,38 @@
 {% load static %}
 
 {% block head %}
-	<title>Register</title>
+	<title>Cart&Orders</title>
 	<script type='text/javascript' src='{%static "js/orders.js"%}'></script>
+	<link rel="stylesheet" href="{% static 'css/orders.css' %}"></link>
 {% endblock %}
 			
 
 {% block body %}
-	<h2>Hey!! This will not be the register page</h2>
-		<ul>
-			{% for salada in variable %}
-				<li>  {{ salada.name }}  </li>
-			{% endfor %}
-		<ul>
+	<div id="cartDiv">
+		<h4>Cart<h4>
+		<div id="PizzasDiv">
+			<h5>Pizzas</h5>
+			<hr>
+		</div>
+		<div id="SubsDiv">
+			<h5>Subs</h5>
+			<hr>
+		</div>
+		<div id = "DPDiv">
+			<h5>Dinner Platters</h5>
+			<hr>
+		</div>
+		<div id = "PastasDiv">
+			<h5>Pastas</h5>
+			<hr>
+		</div>
+		<div id = "SubsDiv">
+			<h5>Subs</h5>
+			<hr>
+		</div>
+		<button id="makeOrder">Make Order</button>
+	</div>
+	<div id="OrdersDiv">
+		<h4>Orders</h4>
+	</div>
 {% endblock %}
-

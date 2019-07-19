@@ -147,3 +147,13 @@ class order_dinnerPlatter(models.Model):
 	def create(cls, order, dp):
 		relation = cls(order= order, dinnerPlatter=dp)
 		return relation
+
+class made_orders(models.Model):
+	order = models.ForeignKey(order, on_delete=models.CASCADE)
+	user = models.CharField(max_length=64)
+
+	@classmethod
+	def create(cls, order):
+		relation = cls(order = order, user = order.user)
+		return relation
+		#depois remove o user da ordem original na view
