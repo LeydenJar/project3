@@ -10,7 +10,9 @@
 
 {% block body %}
 	<div id="cartDiv">
-		<h4>Cart<h4>
+		<h3>Cart<h3>
+			<hr>
+			<br>
 		<div id="PizzasDiv">
 			<h5>Pizzas</h5>
 			<hr>
@@ -27,13 +29,14 @@
 			<h5>Pastas</h5>
 			<hr>
 		</div>
-		<div id = "SubsDiv">
-			<h5>Subs</h5>
+		<div id = "SaladsDiv">
+			<h5>Salads</h5>
 			<hr>
 		</div>
-		<button id="makeOrder">Make Order</button>
 	</div>
 	<div id="OrdersDiv">
-		<h4>Orders</h4>
+		<h3>Orders</h3>
+		<hr>
 	</div>
+	<button id="makeOrder" class="btn btn-primary makeOrderButton">Make Order</button>
 {% endblock %}

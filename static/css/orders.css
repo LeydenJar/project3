@@ -1,21 +1,52 @@
 
 #cartDiv{
 	position:relative;
-	background-color: white;
+	background-color: #763e1b;
 	width:40%;
 	height:90%;
 	margin:15px;
 	overflow-y:scroll;
+	text-align:center;
 	
 
 }
 #OrdersDiv{
 	position:relative;
-	background-color: white;
+	background-color: #763e1b;
 	width:40%;
 	height:90%;
 	left:50%;
 	bottom:93%;
 	margin:15px;
 	overflow-y:scroll;
+	text-align:center;
+}
+
+#PizzasDiv{
+	position:relative;
+}
+.btn{
+	background-color:#532f18;
+	border-color:#a0512a !important;
+	box-shadow:none !important;
+}
+.btn:hover{
+	background-color:#a0512a;
+}
+
+.btn:active:focus, .btn:focus{
+	background-color:#bb643a !important;
+}
+
+
+h3{
+	margin:5%;
+}
+
+
+.makeOrderButton{
+ 	position:absolute;
+ 	top:90%;
+ 	width:20%;
+ 	left:12%;
 }

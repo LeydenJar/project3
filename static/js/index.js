@@ -121,7 +121,7 @@ function updateExtraButtons(currentItem){
 				selectedButton.innerHTML = optionButton.innerHTML;
 				document.querySelector(".divSelected").appendChild(selectedButton);
 				optionButton.parentElement.removeChild(optionButton);
-				if (currentItem.tipo = "sub"){
+				if (currentItem.tipo == "sub"){
 					for (i = 0; i < data.extras.length; i++){
 						if (data.extras[i].name === selectedButton.innerHTML){
 							console.log(typeof currentItem.price);

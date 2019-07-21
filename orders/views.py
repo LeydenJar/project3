@@ -5,6 +5,72 @@ import sys
 from django.core.serializers import serialize
 from django.forms.models import model_to_dict
 
+
+def makedict(dicionario, serial, w):
+
+
+	for pizza in serial["pizzas"]:
+		obj = {}
+		e = models.order_pizza.objects.get(pk=pizza)
+		obj["reference"] = pizza
+		obj["sicilian"] = e.sicilian
+		obj["size"] = e.size.name
+		obj["price"] = float(e.price)
+		obj["toppings"] = []
+		for topping in e.toppings.all():
+			obj["toppings"].append(topping.name)
+		print(obj)
+		dicionario[w]["pizzas"].append(obj) 
+
+	for sub in serial["subs"]:
+		obj = {}
+		e = models.order_sub.objects.get(pk=sub)
+		obj["reference"] = sub
+		obj["name"] = e.name.name
+		obj["size"] = e.size.name
+		obj["price"] = float(e.price)
+		obj["extras"] = []
+		for extra in e.extras.all():
+			print("got here")
+			obj["extras"].append(extra.name)
+
+		print(obj)
+		dicionario[w]["subs"].append(obj) 
+	
+	for salad in serial["salads"]:
+		obj = {}
+		e = models.order_salad.objects.get(pk=salad)
+		obj["reference"] = salad
+		obj["name"] = e.salad.name
+		obj["price"] = float(e.salad.price)
+		print(obj)
+		dicionario[w]["salads"].append(obj)
+
+	for dp in serial["dinnerPlatters"]:
+		print(dp)
+		for i in models.order_dinnerPlatter.objects.all():
+			print(i)
+		obj = {}
+		e = models.order_dinnerPlatter.objects.get(pk=dp)
+		obj["reference"] = dp
+		obj["name"] = e.dinnerPlatter.name
+		obj["size"] = e.dinnerPlatter.size.name
+		obj["price"] = float(e.dinnerPlatter.price)
+		print(obj)
+		dicionario[w]["dinnerPlatters"].append(obj)
+
+	for pasta in serial["pastas"]:
+		obj = {}
+		e = models.order_pasta.objects.get(pk=pasta)
+		obj["reference"] = dp
+		obj["name"] = e.pasta.name
+		obj["price"] = float(e.pasta.price)
+		print(obj)
+		dicionario[w]["pastas"].append(obj)
+
+	return dicionario
+
+
 # Create your views here.
 def index(request):
 	if request.user.is_authenticated:
@@ -20,26 +86,54 @@ def getOrders(request):
 	dicionario = {
 
 	"cart" : None,
-	"orders" : []
+	"cartItems" : {
+		"pizzas" : [],
+		"subs" : [],
+		"salads" : [],
+		"dinnerPlatters" : [],
+		"pastas" : []
+	},
+	"orders" : [],
+	"orderItems": {
+		"pizzas" : [],
+		"subs" : [],
+		"salads" : [],
+		"dinnerPlatters" : [],
+		"pastas" : []
 	}
+	}
+
 	try:
 		cart = models.order.objects.get(user = request.user)
 		serial = serializers.orderserializer(cart).data
+		dicionario = makedict(dicionario, serial, "cartItems")
 		dicionario["cart"] = serial
 	except:
 		print("user has no cart")
 
-	try:
-		made_orders = models.made_orders.objects.get(user=request.user)
-		for made_order in made_orders:
-			n = models.order.objects.get(pk = made_order.order.id)
-			dicionario["orders"].append(n)
-	except:
-		made_orders=None
+
+	
+	made_orders = models.made_orders.objects.filter(user=request.user)
+	for made_order in made_orders:
+		n = models.order.objects.get(pk = made_order.order.id)
+		ser = serializers.orderserializer(n).data
+		dicionario["orders"].append(ser)
+		dicionario = makedict(dicionario, ser, "orderItems")
+
+
 	return JsonResponse(dicionario)
 
 def putOrder(request):
-	dicionario = {"teste" : "teste"} 
+	dicionario = {"success" : False}
+	#try:
+	cart = models.order.objects.get(user = request.user)
+	mo = models.made_orders.create(cart)
+	mo.save()
+	cart.user = ""
+	cart.save()
+	dicionario["success"] = True
+	#except:
+	#	print("error putting order")
 	return JsonResponse(dicionario)
 
 def getData(request):
@@ -84,7 +178,6 @@ def getData(request):
 
 	return JsonResponse(dicionario)
 
-
 def validate(request):
 	dicionario = {
 		"success" : False,
@@ -107,6 +200,7 @@ def validate(request):
 
 
 	if tipo == "pizza":
+		print("running pizza case")
 		issicilian = request.POST.get('isSicilian')
 		size = request.POST.get('size')
 		toppingsAmount = request.POST.get('toppingsAmount')
@@ -147,6 +241,7 @@ def validate(request):
 		
 
 	elif tipo == "sub":
+		print("running sub case")
 		
 		name = request.POST.get('name')
 		size = request.POST.get('size')

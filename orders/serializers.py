@@ -5,3 +5,4 @@ class orderserializer(serializers.ModelSerializer):
     class Meta:
         model = models.order
         fields = "__all__"
+
