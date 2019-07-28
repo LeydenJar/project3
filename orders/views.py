@@ -1,6 +1,8 @@
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 from . import models, serializers
+from .models import order_pasta, order_salad, order_dinnerPlatter, order_pizza, order_sub
+from .models import models as mm
 import sys
 from django.core.serializers import serialize
 from django.forms.models import model_to_dict
@@ -62,7 +64,7 @@ def makedict(dicionario, serial, w):
 	for pasta in serial["pastas"]:
 		obj = {}
 		e = models.order_pasta.objects.get(pk=pasta)
-		obj["reference"] = dp
+		obj["reference"] = pasta
 		obj["name"] = e.pasta.name
 		obj["price"] = float(e.pasta.price)
 		print(obj)
@@ -314,3 +316,19 @@ def validate(request):
 	print(serial)
 	print(serial2)
 	return JsonResponse(dicionario)
+
+def removeItem(request, tipo, ref):
+	dicionario = {
+	"success" : False
+	}
+	user = request.user
+	order = models.order.objects.filter(user = user)
+	stri = "order_" + tipo
+
+	item = getattr(models, stri)
+	item.objects.filter(pk = ref).delete()
+	#item = models[stri].objects.filter(pk = ref)
+	dicionario["success"] = True
+	return JsonResponse(dicionario)
+	
+

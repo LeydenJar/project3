@@ -50,3 +50,26 @@ h3{
  	width:20%;
  	left:12%;
 }
+
+.showInfo{
+	position:absolute;
+	left:75%;
+	top:35%;
+	width:25%;
+	height:65%;
+	background-color:grey;
+}
+
+.OrderItemInfo{
+
+}
+
+.confirmationDiv{
+	position:absolute;
+	left:50%;
+	top:30%;
+	transform:translateX(-50%);
+	background-color: grey;
+	display:inline-block;
+
+}

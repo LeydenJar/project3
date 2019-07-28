@@ -1,5 +1,5 @@
 from django.urls import path, include
-from orders.views import index, validate, getData, orders, getOrders, putOrder
+from orders.views import index, validate, getData, orders, getOrders, putOrder, removeItem
 from users.views import register
 from django.contrib.auth import views as auth_views
 
@@ -15,7 +15,8 @@ urlpatterns = [
     path('validate', validate, name="validate"),
     path('orders', orders, name="orders"),
     path('getOrders', getOrders, name="getOrders"),
-    path('putOrder', putOrder, name="putOrder")
+    path('putOrder', putOrder, name="putOrder"),
+    path('removeItem/<tipo>/<ref>', removeItem, name="removeItem")
 ]
 
 #url > view > process > response
