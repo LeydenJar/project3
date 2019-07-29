@@ -73,14 +73,12 @@ class order_sub(models.Model):
 	price = models.DecimalField(max_digits = 6, decimal_places = 2)
 
 	def __str__(self):
-		return self.name
+		return str(self.name)
 
 	@classmethod
 	def create(cls, sub):
 		instance = cls(name = sub, size = sub.size, price = sub.price)
 		return instance
-
-	
 
 class order_pizza(models.Model):
 	sicilian = models.BooleanField()

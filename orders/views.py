@@ -9,9 +9,11 @@ from django.forms.models import model_to_dict
 
 
 def makedict(dicionario, serial, w):
-
-
+	print("running inside makedict")
+	print(serial)
+	print("serial")
 	for pizza in serial["pizzas"]:
+		print("running inside pizza for")
 		obj = {}
 		e = models.order_pizza.objects.get(pk=pizza)
 		obj["reference"] = pizza
@@ -22,7 +24,8 @@ def makedict(dicionario, serial, w):
 		for topping in e.toppings.all():
 			obj["toppings"].append(topping.name)
 		print(obj)
-		dicionario[w]["pizzas"].append(obj) 
+		print("getting to the bottom of the pizza for")
+		dicionario[w]["pizzas"].append(obj)
 
 	for sub in serial["subs"]:
 		obj = {}
@@ -40,36 +43,40 @@ def makedict(dicionario, serial, w):
 		dicionario[w]["subs"].append(obj) 
 	
 	for salad in serial["salads"]:
+		print("running on salads for")
+		print(salad)
 		obj = {}
-		e = models.order_salad.objects.get(pk=salad)
+		e = models.salads.objects.get(pk=salad)
+		print(type(e))
 		obj["reference"] = salad
-		obj["name"] = e.salad.name
-		obj["price"] = float(e.salad.price)
+		obj["name"] = e.name
+		obj["price"] = float(e.price)
 		print(obj)
 		dicionario[w]["salads"].append(obj)
 
 	for dp in serial["dinnerPlatters"]:
 		print(dp)
-		for i in models.order_dinnerPlatter.objects.all():
-			print(i)
+		
 		obj = {}
-		e = models.order_dinnerPlatter.objects.get(pk=dp)
+		e = models.dinnerPlatters.objects.get(pk=dp)
 		obj["reference"] = dp
-		obj["name"] = e.dinnerPlatter.name
-		obj["size"] = e.dinnerPlatter.size.name
-		obj["price"] = float(e.dinnerPlatter.price)
+		obj["name"] = e.name
+		obj["size"] = e.size.name
+		obj["price"] = float(e.price)
 		print(obj)
 		dicionario[w]["dinnerPlatters"].append(obj)
 
 	for pasta in serial["pastas"]:
+		print("running on pastas for")
 		obj = {}
-		e = models.order_pasta.objects.get(pk=pasta)
+		e = models.pastas.objects.get(pk=pasta)
 		obj["reference"] = pasta
-		obj["name"] = e.pasta.name
-		obj["price"] = float(e.pasta.price)
+		obj["name"] = e.name
+		obj["price"] = float(e.price)
 		print(obj)
 		dicionario[w]["pastas"].append(obj)
 
+	print(dicionario)
 	return dicionario
 
 
@@ -106,10 +113,15 @@ def getOrders(request):
 	}
 
 	try:
+		print("running inside try")
 		cart = models.order.objects.get(user = request.user)
+		print(cart)
 		serial = serializers.orderserializer(cart).data
-		dicionario = makedict(dicionario, serial, "cartItems")
+		print(serial)
 		dicionario["cart"] = serial
+		dicionario = makedict(dicionario, serial, "cartItems")
+		print("running after makedict function")
+		
 	except:
 		print("user has no cart")
 
@@ -194,6 +206,7 @@ def validate(request):
 		if str(request.user) == o.user:
 			order = o
 			userHasOrder = True
+			break
 	
 	#If the user does not have an order, we create one for him.
 	if not userHasOrder:
@@ -318,15 +331,52 @@ def validate(request):
 	return JsonResponse(dicionario)
 
 def removeItem(request, tipo, ref):
+	print("----------------------------------------------------")
+	
 	dicionario = {
 	"success" : False
 	}
 	user = request.user
-	order = models.order.objects.filter(user = user)
+	order = models.order.objects.get(user = user)
+	print(serializers.orderserializer(order).data)
 	stri = "order_" + tipo
+	tipo_cortado = tipo[:len(tipo)-1]
+	stri2 = "order_" + tipo_cortado
+	
+	if (tipo == "pizzas" or tipo == "subs"):
+		item = getattr(models, stri2)
+		item = item.objects.get(pk = ref)
+		order.total -= item.price
+		getattr(order, tipo).remove(item)
+		#order[tipo].remove(item)
+		order.save()
+	else:
+		relation = None
+		qs = getattr(models, stri2)
+		qs = qs.objects.filter(order = order)
+		print("ref is" + str(ref))
+		print(type(ref))
+		for i in qs:
+			print("inside for")
+			a = getattr(i, tipo_cortado)
+			print("a is " + str(a))
+			print("a id is" + str(a.id))
+			print(type(a.id))
+			if a.id == int(ref):
+				print("a id is equal to ref")
+				relation = i
+				relation.delete()
+				break
+		item = getattr(models, tipo)
+		item = item.objects.get(pk = ref)
+		order.total -= item.price
+		#order[tipo].remove(item)
+		order.save()
+	print(serializers.orderserializer(order).data)
+	print("----------------------------------------------------")
+	
 
-	item = getattr(models, stri)
-	item.objects.filter(pk = ref).delete()
+
 	#item = models[stri].objects.filter(pk = ref)
 	dicionario["success"] = True
 	return JsonResponse(dicionario)

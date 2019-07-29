@@ -196,7 +196,7 @@ getOrders.onload = ()=>{
 				body.appendChild(n);
 
 				var tipo = button.getAttribute("dataType");
-				tipo = tipo.substring(0, tipo.length-1);
+				//tipo = tipo.substring(0, tipo.length-1);
 				console.log(tipo);
 				var ref = button.getAttribute("DataRef");
 				var noButton = document.querySelector("#noButton");
