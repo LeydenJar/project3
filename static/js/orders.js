@@ -138,7 +138,6 @@ getOrders.onload = ()=>{
 					}
 				}
 
-
 				var title = document.createElement("h5");
 				var br = document.createElement("br");
 				var bs = document.createElement("br");
@@ -182,6 +181,9 @@ getOrders.onload = ()=>{
 				showInfoDiv.appendChild(s);
 				showInfoDiv.appendChild(bu);
 				body.appendChild(showInfoDiv);
+
+
+
 			}
 			button.onmouseout = ()=>{
 				showInfoDiv = document.querySelector(".showInfo");
@@ -248,6 +250,7 @@ getOrders.onload = ()=>{
 			
 			arraY = [order.pizzas, order.dinnerPlatters, order.pastas, order.salads, order.subs];
 			count = 0;
+			var numberOfItems = 0;
 
 			arraY.forEach(
 				function(array){
@@ -255,7 +258,7 @@ getOrders.onload = ()=>{
 						var div = document.createElement("div");
 						var bigTitle = document.createElement("h4");
 						var title = document.createElement("h5");
-						var text = document.createElement("p");
+						var text = document.createElement("div");
 						div.setAttribute("class", "OrderItemInfo");
 						bigTitle.setAttribute("class", "bigTitleItemInfo");
 						title.setAttribute("class", "TitleItemInfo");
@@ -302,20 +305,21 @@ getOrders.onload = ()=>{
 						}
 
 						if(item.size){
-							text.innerHTML += item.size + "/hr";
+							text.innerHTML += "<p>" + item.size +"</p>";
 						}
 						if(item.extras){
-							text.innerHTML += item.extras + "/hr";
+							text.innerHTML += "<p>" + item.extras +"</p>";
 						}
 						if (item.toppings){
-							text.innerHTML += item.toppings + "/hr";
+							text.innerHTML += "<p>" +  item.toppings + "</p>";
 						}
-						text.innerHTML += item.price
+						text.innerHTML += "<p>" + item.price+"</p>" ;
 
 						div.appendChild(bigTitle);
 						div.appendChild(title);
 						div.appendChild(text);
 						showInfoDiv.appendChild(div);
+						numberOfItems ++;
 					}
 					count = count+1;
 				}
@@ -324,6 +328,59 @@ getOrders.onload = ()=>{
 
 
 			body.appendChild(showInfoDiv);
+
+			//Setting the credit style animation
+
+			
+				var stylesheet = document.styleSheets[2],
+					rules = stylesheet.rules,
+					i = rules.length,
+					keyframes,
+					keyframe
+				;
+
+				while(i--){
+					keyframes = rules.item(i);
+					console.log(keyframes.name);
+					if((
+		               keyframes.type === keyframes.KEYFRAMES_RULE
+		         	   || keyframes.type === keyframes.WEBKIT_KEYFRAMES_RULE
+				        )
+				        && keyframes.name === "credit"){
+
+
+						var Nrules = keyframes.cssRules;
+						i = Nrules.length;
+						while(i--){
+							
+							keyframe = Nrules.item(i);
+							console.log(keyframe.keyText)
+							console.log(typeof keyframe.keyText)
+							if(
+								(
+		                       keyframe.type === keyframe.KEYFRAME_RULE
+		                    || keyframe.type === keyframe.WEBKIT_KEYFRAME_RULE
+			                )
+			                && keyframe.keyText === "100%"
+								){
+								console.log("running");
+								console.log(numberOfItems)
+								document.querySelectorAll(".OrderItemInfo").forEach(
+										(item)=>{item.style.animationDuration = numberOfItems*1.5 + "s";}
+									);
+									
+								if(numberOfItems > 5){
+									keyframe.style.bottom = numberOfItems*20 + "%";
+								}else{keyframe.style.bottom = 0;}
+								
+
+								break;
+							}
+						}
+						break;
+					}
+				}
+
 		}
 		button.onmouseout = ()=>{
 			showInfoDiv = document.querySelector(".showInfo");
