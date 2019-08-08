@@ -1,13 +1,14 @@
 document.addEventListener("DOMContentLoaded", ()=>{
 var content = document.querySelector(".content");
 var body = document.querySelector("body");
+var data;
 
 var getOrders = new XMLHttpRequest;
 getOrders.open('GET', "getOrders");
 getOrders.send();
 
 getOrders.onload = ()=>{
-	var data = JSON.parse(getOrders.responseText);
+	data = JSON.parse(getOrders.responseText);
 	console.log(data);
 
 		//Colocando as pizzas
@@ -108,6 +109,10 @@ getOrders.onload = ()=>{
 			console.log("made button" + item.name);
 			console.log(data.cart.salads.length);
 		}
+
+		//Colocando o preço
+		document.querySelector("#preço").innerHTML = "$:" + data.cart.total;
+
 	}
 
 	
@@ -193,7 +198,7 @@ getOrders.onload = ()=>{
 			button.onclick = ()=>{
 				var n = document.createElement("div");
 				n.innerHTML = "Are you sure you want to remove this item?";
-				n.innerHTML += "<button id='yesButton'> YES </button> <button id='noButton'> NO </button>";
+				n.innerHTML += "<button class='btn btn-primary'> YES </button> <button class='btn btn-primary'> NO </button>";
 				n.setAttribute("class", "confirmationDiv");
 				body.appendChild(n);
 
@@ -370,7 +375,7 @@ getOrders.onload = ()=>{
 									);
 									
 								if(numberOfItems > 5){
-									keyframe.style.bottom = numberOfItems*20 + "%";
+									keyframe.style.bottom = numberOfItems*30 + "%";
 								}else{keyframe.style.bottom = 0;}
 								
 
@@ -392,22 +397,50 @@ getOrders.onload = ()=>{
 
 makeOrderButton = document.querySelector("#makeOrder");
 makeOrderButton.onclick = ()=>{
-	var putOrder = new XMLHttpRequest;
-	putOrder.open('GET', 'putOrder');
-	putOrder.send();
+	if(data.cart){
+		//Confirmation
+		//Criando div
+		var div = document.createElement("div");
+		var header = document.createElement("h5");
+		var yesButton = document.createElement("button");
+		var noButton = document.createElement("button");
 
-	putOrder.onload = ()=>{
-		var response = JSON.parse(putOrder.responseText);
-		console.log(response);
+		header.textContent = "Are you sure you want to make this order?";
+		yesButton.textContent = "Yes";
+		noButton.textContent = "no";
+		yesButton.className = "choiceButton yesButton btn btn-primary";
+		noButton.className = "choiceButton noButton btn-primary btn";
+		div.className = "confirmationDiv";
 
-		if (response.success == true){
-			alert("success!");
-			location.reload();
-		}else{
-			alert("there was some error!");
+		div.appendChild(header);
+		div.appendChild(noButton);
+		div.appendChild(yesButton);
+		body.appendChild(div);
+
+		noButton.onclick = ()=>{
+			var div = document.querySelector(".confirmationDiv");
+			div.parentElement.removeChild(div);
 		}
+		yesButton.onclick = ()=>{
+			var putOrder = new XMLHttpRequest;
+			putOrder.open('GET', 'putOrder');
+			putOrder.send();
+
+
+			putOrder.onload = ()=>{
+				var response = JSON.parse(putOrder.responseText);
+				console.log(response);
+
+				if (response.success == true){
+					alert("success!");
+					location.reload();
+				}else{
+					alert("there was some error!");
+				}
+			}
+		}		
+	}else{
+		alert("put some items in your cart first");
 	}
-
-
 }
 });

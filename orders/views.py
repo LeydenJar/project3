@@ -382,3 +382,42 @@ def removeItem(request, tipo, ref):
 	return JsonResponse(dicionario)
 	
 
+def staffPage(request):
+	
+	return render(request, "orders/staffPage.html")
+
+def getOrdersStaff(request):
+	dicionario = {
+		"orders": [],
+		"orderItems": {
+			"pizzas" : [],
+			"subs" : [],
+			"salads" : [],
+			"dinnerPlatters" : [],
+			"pastas" : []
+
+		}
+		}
+	for i in models.made_orders.objects.all():
+		order = i.order
+		serial = serializers.orderserializer(order).data
+		makedict(dicionario, serial, "orderItems")
+		serial["user"] = i.user
+		dicionario["orders"].append(serial)
+
+	return JsonResponse(dicionario)
+
+def deleteOrder(request, orderId):
+
+	print("running Function")
+	dicionario={
+		"success" : False
+	}
+	if request.user.is_superuser:
+		try:
+			order = models.order.objects.get(pk = orderId)
+			order.delete()
+			dicionario["success"] = True
+		except:
+			print("cold not delete order!")
+	return JsonResponse(dicionario)
