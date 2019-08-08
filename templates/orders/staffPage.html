@@ -1,0 +1,28 @@
+{% extends "template.html" %}
+{% load static %}
+
+{% block head %}
+	<title>Cart&Orders</title>
+	<script type='text/javascript' src='{%static "js/staffPage.js"%}'></script>
+	<link rel="stylesheet" href="{% static 'css/staffPage.css' %}"></link>
+{% endblock %}
+			
+
+{% block body %}
+
+	{% if request.user.is_superuser%}
+	<div id="openOrdersDiv">
+		<h3>Open Orders<h3>
+			<hr>
+			<br>
+	</div>
+	<div id="orderItemsDiv">
+		<h3>Order Items</h3>
+		<hr>
+	</div>
+	<button id="deleteOrder" class="btn btn-primary">Delete Order</button>
+	<button id="refresh" class = "btn btn-primary">Refresh</button>
+	{% else %}
+	<h3>You are not authorized</h3>
+	{% endif %}
+{% endblock %}
