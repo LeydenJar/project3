@@ -134,3 +134,17 @@ p{
 	text-align:center;
 	z-index:-1;
 }
+
+.loadingDiv{
+	position:absolute;
+	width:50%;
+	height:10%;
+	left:50%;
+	top:30%;
+	transform:translateX(-50%);
+	text-align:center;
+	background-color:#cf8a5e;
+	border-style:solid;
+	border-width:thin;
+	border-color:#753718;
+}

@@ -422,6 +422,12 @@ makeOrderButton.onclick = ()=>{
 			div.parentElement.removeChild(div);
 		}
 		yesButton.onclick = ()=>{
+
+			//Creating loading screen
+			var div = document.createElement("div");
+			div.className = "loadingDiv";
+			div.textContent = "loading...";
+			body.appendChild(div);
 			var putOrder = new XMLHttpRequest;
 			putOrder.open('GET', 'putOrder');
 			putOrder.send();
@@ -430,6 +436,8 @@ makeOrderButton.onclick = ()=>{
 			putOrder.onload = ()=>{
 				var response = JSON.parse(putOrder.responseText);
 				console.log(response);
+
+
 
 				if (response.success == true){
 					alert("success!");

@@ -6,7 +6,9 @@ from .models import models as mm
 import sys
 from django.core.serializers import serialize
 from django.forms.models import model_to_dict
-
+from django.core.mail import send_mail
+import os
+from django.conf import settings
 
 def makedict(dicionario, serial, w):
 	print("running inside makedict")
@@ -146,6 +148,14 @@ def putOrder(request):
 	cart.user = ""
 	cart.save()
 	dicionario["success"] = True
+	
+	send_mail(
+	    'Your order is comming!',
+		'Hi ' + str(request.user) + ' your order is comming!',
+		settings.EMAIL_HOST_USER,
+		[request.user.email],
+	    fail_silently=False,
+	)
 	#except:
 	#	print("error putting order")
 	return JsonResponse(dicionario)
