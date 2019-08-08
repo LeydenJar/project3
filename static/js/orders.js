@@ -28,7 +28,7 @@ getOrders.onload = ()=>{
 			}
 			if (item.sicilian){
 				button.innerHTML =  "Sicilian Pizza";
-			}else{"Normal Pizza"}
+			}else{button.innerHTML = "Normal Pizza";}
 			
 			pizzadiv.insertBefore(button, pizzadiv.childNodes[2]);
 		}
